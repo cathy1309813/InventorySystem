@@ -10,7 +10,7 @@ using InventorySystem.Repositories;
 //Database: inventory_db (CREATE DATABASE inventory_db;)
 //uid: mysql使用者名稱
 //pwd: mysql使用者密碼
-const string MYSQL CONNECTION STRING = "Server=localhost;Prot=3306;Database=Inventory_db;uid=root;pwd=cathypassword;";
+const string MYSQL_CONNECTION_STRING = "Server=localhost;Port=3306;Database=Inventory_db;uid=root;pwd=Qwas0321polk;";
 
 MySqlProductRepository productRepository = new MySqlProductRepository(MYSQL_CONNECTION_STRING);
 

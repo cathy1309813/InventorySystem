@@ -22,14 +22,14 @@ public class MySqlProductRepository : IProductRepository //:(冒號)--代表實�
             {
                 connection.Open();
                 string createTableSql = @"
-                create table if not exists products(
-                    id int primary key auto increment,
-                    name varchar(100) not null,
-                    price decimal not null,
-                    quantity int not null,
-                    status int not null -- 對應enum的整數值
-                );";
-                using MySqlCommand cmd = new MySqlCommand(createTableSql, connection);
+                 create table if not exists products(
+                     id int primary key auto_increment,
+                     name varchar(100) not null,
+                     price decimal(10, 2) not null,
+                     quantity int not null,
+                     status int not null -- 對應enum的整數值
+                 );";
+                using (MySqlCommand cmd = new MySqlCommand(createTableSql, connection))
                 {
                     cmd.ExecuteNonQuery();
                 }
@@ -37,11 +37,11 @@ public class MySqlProductRepository : IProductRepository //:(冒號)--代表實�
             }
             catch (MySqlException e)
             {
-                Console.WriteLine($"初始化MySql失敗 : {e.Message}");
+                Console.WriteLine($"初始化MySql失敗：{e.Message}");
             }
         }
     }
-
+    
     public List<Product> GetAllProducts()
     {
         List<Product> products = new List<Product>();
@@ -49,13 +49,13 @@ public class MySqlProductRepository : IProductRepository //:(冒號)--代表實�
         {
             connection.Open();
             string selectSql = "SELECT * FROM products";
-            using (MySqlCommand cmd = new MySqlCommand(selectSql, connection));
+            using (MySqlCommand cmd = new MySqlCommand(selectSql, connection))
             {
-                using (MySqlDataReader reader = cmd.ExecuteReader());
+                using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        product.Add(new Product(reader.GetInt32("id"),
+                        products.Add(new Product(reader.GetInt32("id"),
                             reader.GetString("name"),
                             reader.GetDecimal("price"),
                             reader.GetInt32("quantity"))
@@ -71,8 +71,30 @@ public class MySqlProductRepository : IProductRepository //:(冒號)--代表實�
 
     public Product GetProductById(int id)
     {
-        Product products = null;
-        
-        return products;
+        Product product = null;
+        using (var connection = new MySqlConnection(_connectionString))
+        {
+            connection.Open();
+            string selectSql = "SELECT * FROM products WHERE id = @id";
+            using (MySqlCommand cmd = new MySqlCommand(selectSql, connection))
+            {
+                //防止sql injection
+                cmd.Parameters.AddWithValue("@id", id);
+                using (MySqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        product = new Product(reader.GetInt32("id"),
+                            reader.GetString("name"),
+                            reader.GetDecimal("price"),
+                            reader.GetInt32("quantity"))
+                        {
+                            Status = (Product.ProductStatus)reader.GetInt32("status")
+                        };
+                    }
+                }
+            }
+        }
+        return product;
     }
 }
