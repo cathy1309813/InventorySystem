@@ -3,9 +3,12 @@ using Org.BouncyCastle.Cms;
 
 namespace InventorySystem.Repositories;
 
-public class MySqlProductRepository : IProductRepository
+public class MySqlProductRepository : IProductRepository //:(冒號)--代表實作
+// java: implement interface
+// java: extend ParentObj
 {
     private readonly string _connectionString;
+    //constructor
     public MySqlProductRepository(string connectionString)
     {
         _connectionString = connectionString;
@@ -30,6 +33,7 @@ public class MySqlProductRepository : IProductRepository
                 {
                     cmd.ExecuteNonQuery();
                 }
+                Console.WriteLine("MySql初始化成功或已存在");
             }
             catch (MySqlException e)
             {
@@ -40,11 +44,35 @@ public class MySqlProductRepository : IProductRepository
 
     public List<Product> GetAllProducts()
     {
-        throw new NotImplementedException();
+        List<Product> products = new List<Product>();
+        using (var connection = new MySqlConnection(_connectionString))
+        {
+            connection.Open();
+            string selectSql = "SELECT * FROM products";
+            using (MySqlCommand cmd = new MySqlCommand(selectSql, connection));
+            {
+                using (MySqlDataReader reader = cmd.ExecuteReader());
+                {
+                    while (reader.Read())
+                    {
+                        product.Add(new Product(reader.GetInt32("id"),
+                            reader.GetString("name"),
+                            reader.GetDecimal("price"),
+                            reader.GetInt32("quantity"))
+                        {
+                            Status = (Product.ProductStatus)reader.GetInt32("status")
+                        });
+                    }
+                }
+            }
+        }
+        return products;
     }
 
     public Product GetProductById(int id)
     {
-        throw new NotImplementedException();
+        Product products = null;
+        
+        return products;
     }
 }

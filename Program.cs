@@ -2,23 +2,33 @@
 
 using System.ComponentModel.Design;
 using Microsoft.VisualBasic.CompilerServices;
-using InventorySystem;
+
+using InventorySystem.Repositories;
+
+//Server: mtsql所在伺服器位置 (localhost or ip xxx.xxx.xxx.xxx)
+//Port: mysql端口 (預設3306)
+//Database: inventory_db (CREATE DATABASE inventory_db;)
+//uid: mysql使用者名稱
+//pwd: mysql使用者密碼
+const string MYSQL CONNECTION STRING = "Server=localhost;Prot=3306;Database=Inventory_db;uid=root;pwd=cathypassword;";
+
+MySqlProductRepository productRepository = new MySqlProductRepository(MYSQL_CONNECTION_STRING);
 
 //練習:
-//Product testProduct = new Product (1, "testProduct", 100.0m, 5);
-//testProduct.Quantity = 15;
-//testProduct.UpdateStatus();
-//Console.WriteLine(testProduct.ToString());
+// Product testProduct = new Product (1, "testProduct", 100.0m, 5);
+// testProduct.Quantity = 15;
+// testProduct.UpdateStatus();
+// Console.WriteLine(testProduct.ToString());
 
-//練習:物件導向
-List<Animal> animals = new List<Animal>();
-animals.Add(new Dog("小黑"));
-animals.Add(new Cat("花花"));
-animals.Add(new Bird("bird"));
-foreach (Animal animal in animals)
-{
-    animal.MakeSound();
-}
+//練習:物件導向   
+// List<Animal> animals = new List<Animal>();
+// animals.Add(new Dog("小黑"));
+// animals.Add(new Cat("花花"));
+// animals.Add(new Bird("bird"));
+// foreach (Animal animal in animals)
+// {
+//     animal.MakeSound();
+// }
 
 
 Console.WriteLine("Hello, World!");
