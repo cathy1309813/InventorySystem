@@ -97,4 +97,25 @@ public class MySqlProductRepository : IProductRepository //:(冒號)--代表實�
         }
         return product;
     }
+    
+    public void AddProduct(string? name, decimal price, int quantity)
+    {
+        using (var connection = new MySqlConnection(_connectionString))
+        {
+            connection.Open();
+            string insertSql = "INSERT INTO products (name , price, quantity, status)" +
+                               "VALUES (@name, @price, @quantity, @status)";
+            using (MySqlCommand cmd = new MySqlCommand(insertSql, connection))
+            {
+                //防止sql injection
+                cmd.Parameters.AddWithValue("@name", name);
+                cmd.Parameters.AddWithValue("@price", price);
+                cmd.Parameters.AddWithValue("@quantity", quantity);
+                //todo refractor
+                cmd.Parameters.AddWithValue("@status", 0);
+                //執行 SQL，不回傳結果
+                cmd.ExecuteNonQuery(); 
+            }
+        }
+    }
 }
